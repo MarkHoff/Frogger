@@ -23,7 +23,9 @@ var Engine = (function(global) {
         win = global.window,
         canvas = doc.createElement('canvas'),
         ctx = canvas.getContext('2d'),
-        lastTime;
+        lastTime,
+        winFlag = 1,
+        lostFlag = 1;
 
     canvas.width = 909;
     canvas.height = 680;
@@ -67,7 +69,7 @@ var Engine = (function(global) {
         reset();
         lastTime = Date.now();
         main();
-    }
+    };
 
     /* This function is called by main (our game loop) and itself calls all
      * of the functions which may need to update entity's data. Based on how
@@ -80,8 +82,11 @@ var Engine = (function(global) {
      */
     function update(dt) {
         updateEntities(dt);
-        // checkCollisions();
-    }
+        //checkCollisions();
+        bugCollision();
+        gameOver();
+        //winner();
+    };
 
     /* This is called by the update function  and loops through all of the
      * objects within your allEnemies array as defined in app.js and calls
@@ -95,7 +100,77 @@ var Engine = (function(global) {
             enemy.update(dt);
         });
         player.update();
-    }
+    };
+    
+    
+    //This function checks the collision for bug with the player
+    function bugCollision() {
+        for (var i = 0; i < allEnemies.length; i++) {
+            if(collide(player,allEnemies[i],40)) {
+                //bite.play();
+                player.resetPosition();
+                player.lossLife();
+                //milkBottle.resetPosition();
+            }
+        }
+    };
+    
+    
+    //This function checks for collision during the game between any two entities 
+    function collide(player,entity,theta) {
+        if((entity.x >= (player.x - theta - 20)) && (entity.x <= (player.x + theta + 30))) {
+            if ((entity.y >= (player.y - theta + 20)) && (entity.y <= (player.y + theta - 15))){
+                return true;
+            }
+        }
+    };
+    
+    
+    //This detects the game over, when there is no more life for player left (3 allowed)
+    function gameOver() {
+        if(player.life === 0) {
+            //soundEfx.pause();
+            enemy.speed = 0;
+            player.speed = 0;
+            player.sprite = player.sad;
+            player.x = 410;
+            player.y = 240;
+            allEnemies = [];
+           // milkBottle.hide();
+            ctx.font = "35px Arial";
+            ctx.fillStyle = "red";
+            ctx.fillText("Game Over", 350, 45);
+            if(lostFlag === 1) {
+                //babyGirl.cry();
+                //babyBoy.cry();
+                lostFlag++;
+            }
+        }
+    };
+    
+    
+    //This function announces the winner with a background music and 
+    //meme text when the conditions are met: minimum feed set to four bottles 
+    /*function winner() {
+        if((givenMb === 4) && (player.life)) {
+            //soundEfx.pause();
+            enemy.speed = 0;
+            player.speed = 0;
+            player.x = 410;
+            player.y = 45;
+            allEnemies = [];
+            //milkBottle.hide();
+            //babyGirl.happy();
+            //babyBoy.happy();
+            ctx.font = "35px Arial";
+            ctx.fillStyle = "Blue";
+            ctx.fillText("You Won!", 350, 45);
+            if(winFlag === 1) {
+                //winSnd.play();
+                winFlag++;
+            }
+        }
+    }; */
 
     /* This function initially draws the "game level", it will then call
      * the renderEntities function. Remember, this function is called every

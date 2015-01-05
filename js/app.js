@@ -2,13 +2,14 @@
 //Declare variables
 
 var PLAYER_StrtX = 0,
-    PLAYER_StrtY = 497,
+    PLAYER_StrtY = 492,
     ENEMY_StrtX = -40,
     ENEMY_StrtY = [142, 225, 308, 391],
     ENEMY_Speed = [150, 200, 400, 500, 300,350],
-    PLAYER_MoveY = 85,
-    PLAYER_MoveX = 101,
-    player_life = 3;
+    //PLAYER_MoveY = 85,
+    //PLAYER_MoveX = 101,
+    player_life = 3
+    level = 1;
     
 var Enemy = function() {
     // Variables applied to each of our instances go here,
@@ -47,25 +48,53 @@ Enemy.prototype.render = function() {
 var enemy = new Enemy();
 var allEnemies = [enemy];
 
+
+
+//This function checks the level of the game and generates bugs 
+//accordingly by calling spawnEnemy function
+function chkLevel() {
+    if (level === 1)
+        spawnEnemy(3);
+    else if (level === 2)
+        spawnEnemy(5);
+};
+
+
+//This function is called by chkLevel function 
+//to create enemy bugs acc. to the game level
+function spawnEnemy(n) {
+    for (var i = 0; i < n; i++) {
+        var createEnemy = new Enemy();
+        allEnemies.push(createEnemy);
+    }
+};
+
+
+chkLevel();//function invoke to chk the level of the game
+//End Enemy functions
+
 // Now write your own player class
 // This class requires an update(), render() and
 // a handleInput() method.
 
 
 var Player = function(x,y,life) {
-    this.sprite = 'images/char-pink-girl.png';
+    this.sprite = 'images/char-boy.png';
     this.withMb = 'images/char-pink-girlMb.png';
     this.playerLife = 'images/life.png';
-    this.sad = 'images/char-pink-girl-sad.png';
+    this.sad = 'images/char-boy.png';
     this.x = x;
     this.y = y;
-    this.speed = 8;
+    this.xSpeed = 100;
+    this.ySpeed = 90;
     this.life = life;
   };
 
+// Update the player's position
+// Parameter: dt, a time delta between ticks
 Player.prototype.update = function(dt) {
-    this.x * dt + this.speed;
-    this.y * dt + this.speed;
+    this.x * dt + this.xSpeed;
+    this.y * dt + this.ySpeed;
 };
 //Renders player sprite on the canvas
 Player.prototype.render = function(){
@@ -76,45 +105,48 @@ Player.prototype.render = function(){
         positionX += 30;
     };
 };
+
 //This function resets the position of the player 
 Player.prototype.resetPosition = function() {
     this.x = PLAYER_StrtX;
     this.y = PLAYER_StrtY;
-    this.sprite = 'images/char-pink-girl.png';
+    this.sprite = 'images/char-boy.png';
 };
 //This function reduces the life of 
 //the player after collision with bug
 Player.prototype.lossLife = function() {
     this.life-- ;
 };
+
+
 //This function moves the player around the 
 //canvas based on the arrow keys pushed
 Player.prototype.handleInput = function(key) {
     switch(key) {
         case 'left':
-            if (this.x < -40){
-                this.x = 880;
+            if (this.x < 5){  //goes off the canvas
+                this.x = 800;
             } else {
-                this.x -= this.speed;
+                this.x -= this.xSpeed;
             }
             break;  
         case 'right':
-            if (this.x > 880){
-                this.x = -40;
+            if (this.x > 750){  //goes off the canvas
+                this.x = -5;
             } else {
-                this.x += this.speed;
+                this.x += this.xSpeed;
             }
              break;
         case 'up':
-            if (this.y < 1){
+            if (this.y < 1){  //goes off the canvas
             } else {
-                this.y -= this.speed;
+                this.y -= this.ySpeed;
             }
             break;
         case 'down':
-            if(this.y > 500){
+            if(this.y > 450){  //goes off the canvas
             } else {
-                this.y += this.speed;
+                this.y += this.ySpeed;
             }
             break;
         default :
