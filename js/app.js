@@ -9,7 +9,11 @@ var PLAYER_StrtX = 0,
     //PLAYER_MoveY = 85,
     //PLAYER_MoveX = 101,
     player_life = 3
-    level = 1;
+    level = 1,
+    GEM_X = [30,131,232,333,434,535,636,737,838],
+    //GEM_Y = [132, 222, 312, 402];
+    //GEM_Y = [492, 402, 312, 222];
+    GEM_Y = [215, 298, 381, 464];
     
 var Enemy = function() {
     // Variables applied to each of our instances go here,
@@ -80,8 +84,8 @@ chkLevel();//function invoke to chk the level of the game
 
 var Player = function(x,y,life) {
     this.sprite = 'images/char-boy.png';
-    this.withMb = 'images/char-pink-girlMb.png';
-    this.playerLife = 'images/life.png';
+    //this.withMb = 'images/char-pink-girlMb.png';
+    this.playerLife = 'images/char-boy-life.png';
     this.sad = 'images/char-boy.png';
     this.x = x;
     this.y = y;
@@ -128,6 +132,7 @@ Player.prototype.handleInput = function(key) {
                 this.x = 800;
             } else {
                 this.x -= this.xSpeed;
+                console.log(this.x + " " + this.y);
             }
             break;  
         case 'right':
@@ -135,18 +140,21 @@ Player.prototype.handleInput = function(key) {
                 this.x = -5;
             } else {
                 this.x += this.xSpeed;
+                console.log(this.x + " " + this.y);
             }
              break;
         case 'up':
             if (this.y < 1){  //goes off the canvas
             } else {
                 this.y -= this.ySpeed;
+                console.log(this.x + " " + this.y);
             }
             break;
         case 'down':
             if(this.y > 450){  //goes off the canvas
             } else {
                 this.y += this.ySpeed;
+                console.log(this.x + " " + this.y);
             }
             break;
         default :
@@ -159,6 +167,35 @@ Player.prototype.handleInput = function(key) {
 
 // Creating a new player object
 var player = new Player(PLAYER_StrtX, PLAYER_StrtY, player_life);
+
+
+var BlueGem = function() {
+    this.sprite = 'images/Gem Blue.png';
+    this.x = GEM_X[Math.floor(Math.random()*9)];
+    this.y = GEM_Y[Math.floor(Math.random()*4)];
+    console.log("The gem is at " + this.x + " and " + this.y);
+};
+
+BlueGem.prototype.render = function() {
+    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+};
+//This function hides the milk bottle by putting it in negative x and y axis 
+//after it is collected by player in engine.js via collectMilkBottle() function
+BlueGem.prototype.hide = function() {
+    this.x = -800;
+    this.y = -800;
+};
+//This function resets the position of milk bottle 
+//after it is given to baby via giveMb() function in engine.js  
+BlueGem.prototype.resetPosition = function() {
+    this.x = GEM_X[Math.floor(Math.random()*9)];
+    this.y = GEM_Y[Math.floor(Math.random()*4)];
+};
+//Creates a new object milkBottle of class MilkBottle
+var blueGem = new BlueGem();
+//end milkbottle
+
+
 
 // This listens for key presses and sends the keys to your
 // Player.handleInput() method. You don't need to modify this.

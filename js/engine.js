@@ -24,6 +24,7 @@ var Engine = (function(global) {
         canvas = doc.createElement('canvas'),
         ctx = canvas.getContext('2d'),
         lastTime,
+        collectedGem = 0,
         winFlag = 1,
         lostFlag = 1;
 
@@ -84,6 +85,7 @@ var Engine = (function(global) {
         updateEntities(dt);
         //checkCollisions();
         bugCollision();
+        collectBlueGem();
         gameOver();
         //winner();
     };
@@ -107,14 +109,23 @@ var Engine = (function(global) {
     function bugCollision() {
         for (var i = 0; i < allEnemies.length; i++) {
             if(collide(player,allEnemies[i],40)) {
-                //bite.play();
                 player.resetPosition();
                 player.lossLife();
-                //milkBottle.resetPosition();
+                blueGem.resetPosition();
             }
         }
     };
     
+    
+    //This function lets the player to 'collect' the gem : 
+    //uses collision and change of player sprite
+    function collectBlueGem() {
+        if (collide2(player, blueGem, 30)) {
+            //player.sprite = player.withMb;
+            blueGem.hide();
+        }
+   };
+
     
     //This function checks for collision during the game between any two entities 
     function collide(player,entity,theta) {
@@ -124,6 +135,17 @@ var Engine = (function(global) {
             }
         }
     };
+    
+    
+    //This function checks for collision during the game between any two entities 
+    function collide2(player,entity,theta) {
+        if((entity.x >= (player.x - theta - 20)) && (entity.x <= (player.x + theta + 30))) {
+            if ((entity.y >= (player.y - theta + 20)) && (entity.y <= (player.y + theta + 70))){
+                return true;
+            }
+        }
+    };
+    
     
     
     //This detects the game over, when there is no more life for player left (3 allowed)
@@ -136,13 +158,11 @@ var Engine = (function(global) {
             player.x = 410;
             player.y = 240;
             allEnemies = [];
-           // milkBottle.hide();
+            blueGem.hide();
             ctx.font = "35px Arial";
             ctx.fillStyle = "red";
-            ctx.fillText("Game Over", 350, 45);
+            ctx.fillText("Game Over", 350, 30);
             if(lostFlag === 1) {
-                //babyGirl.cry();
-                //babyBoy.cry();
                 lostFlag++;
             }
         }
@@ -183,8 +203,8 @@ var Engine = (function(global) {
          * for that particular row of the game level.
          */
         var rowImages = [
-                'images/grass-block.png',   // Top row is water
-                'images/grass-block.png',   // Second row is water
+        		'images/grass-block.png',	// Row 1 of 2 grass
+                'images/grass-block.png',   // Row 2 of 2 grass
                 'images/stone-block.png',   // Row 1 of 4 of stone
                 'images/stone-block.png',   // Row 2 of 4 of stone
                 'images/stone-block.png',   // Row 3 of 4 of stone
@@ -229,6 +249,7 @@ var Engine = (function(global) {
         });
 
         player.render();
+        blueGem.render();
     }
 
     /* This function does nothing but it could have been a good place to
@@ -252,7 +273,11 @@ var Engine = (function(global) {
         'images/char-pink-girlMb.png',
         'images/char-pink-girl.png',
         'images/life.png',
-        'images/char-pink-girl-sad.png'
+        'images/char-pink-girl-sad.png',
+        'images/char-boy-life.png',
+        'images/Gem Blue.png',
+        'images/Gem Green.png',
+        'images/Gem Orange.png'
     ]);
     
     Resources.onReady(init);
