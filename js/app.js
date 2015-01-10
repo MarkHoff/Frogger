@@ -8,7 +8,8 @@ var PLAYER_StrtX = 0,
     ENEMY_Speed = [150, 200, 400, 500, 300,350],
     //PLAYER_MoveY = 85,
     //PLAYER_MoveX = 101,
-    player_life = 3
+    player_life = 3,
+    trophies = 0,
     level = 1,
     GEM_X = [30,131,232,333,434,535,636,737,838],
     //GEM_Y = [132, 222, 312, 402];
@@ -169,15 +170,22 @@ Player.prototype.handleInput = function(key) {
 var player = new Player(PLAYER_StrtX, PLAYER_StrtY, player_life);
 
 
-var BlueGem = function() {
+var BlueGem = function(trophy) {
     this.sprite = 'images/Gem Blue.png';
     this.x = GEM_X[Math.floor(Math.random()*9)];
     this.y = GEM_Y[Math.floor(Math.random()*4)];
-    console.log("The gem is at " + this.x + " and " + this.y);
+    this.playerTrophy = 'images/Gem Blue Small.png';
+    this.trophy = trophy;
+    //console.log("The gem is at " + this.x + " and " + this.y);
 };
 
 BlueGem.prototype.render = function() {
+    var positionX = 0;
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+    for (var i = 1; i <= this.trophy; i++) {
+        ctx.drawImage(Resources.get(this.playerTrophy), 700 + positionX, 70);
+        positionX += 30;
+    };
 };
 //This function hides the milk bottle by putting it in negative x and y axis 
 //after it is collected by player in engine.js via collectMilkBottle() function
@@ -191,8 +199,15 @@ BlueGem.prototype.resetPosition = function() {
     this.x = GEM_X[Math.floor(Math.random()*9)];
     this.y = GEM_Y[Math.floor(Math.random()*4)];
 };
+
+
+BlueGem.prototype.winTrophy = function() {
+    this.trophy++ ;
+    
+  };
+    
 //Creates a new object milkBottle of class MilkBottle
-var blueGem = new BlueGem();
+var blueGem = new BlueGem(trophies);
 //end milkbottle
 
 

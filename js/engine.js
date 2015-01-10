@@ -25,6 +25,7 @@ var Engine = (function(global) {
         ctx = canvas.getContext('2d'),
         lastTime,
         collectedGem = 0,
+        gemsCollected = 0,
         winFlag = 1,
         lostFlag = 1;
 
@@ -83,11 +84,10 @@ var Engine = (function(global) {
      */
     function update(dt) {
         updateEntities(dt);
-        //checkCollisions();
         bugCollision();
         collectBlueGem();
         gameOver();
-        //winner();
+        winner();
     };
 
     /* This is called by the update function  and loops through all of the
@@ -121,8 +121,12 @@ var Engine = (function(global) {
     //uses collision and change of player sprite
     function collectBlueGem() {
         if (collide2(player, blueGem, 30)) {
-            //player.sprite = player.withMb;
             blueGem.hide();
+            blueGem.winTrophy();
+            blueGem.resetPosition();
+            player.resetPosition();
+            gemsCollected++;
+            //ctx.drawImage(Resources.get(this.blueGemSmall), 700, 50);
         }
    };
 
@@ -171,14 +175,15 @@ var Engine = (function(global) {
     
     //This function announces the winner with a background music and 
     //meme text when the conditions are met: minimum feed set to four bottles 
-    /*function winner() {
-        if((givenMb === 4) && (player.life)) {
+    function winner() {
+        if((gemsCollected === 5) && (player.life)) {
             //soundEfx.pause();
             enemy.speed = 0;
             player.speed = 0;
             player.x = 410;
             player.y = 45;
             allEnemies = [];
+            blueGem.hide();
             //milkBottle.hide();
             //babyGirl.happy();
             //babyBoy.happy();
@@ -190,7 +195,7 @@ var Engine = (function(global) {
                 winFlag++;
             }
         }
-    }; */
+    }; 
 
     /* This function initially draws the "game level", it will then call
      * the renderEntities function. Remember, this function is called every
@@ -277,7 +282,10 @@ var Engine = (function(global) {
         'images/char-boy-life.png',
         'images/Gem Blue.png',
         'images/Gem Green.png',
-        'images/Gem Orange.png'
+        'images/Gem Orange.png',
+        'images/Gem Blue Small.png',
+        'images/Gem Green Small.png',
+        'images/Gem Orange Small.png'
     ]);
     
     Resources.onReady(init);
