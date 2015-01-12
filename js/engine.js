@@ -27,7 +27,10 @@ var Engine = (function(global) {
         collectedGem = 0,
         gemsCollected = 0,
         winFlag = 1,
-        lostFlag = 1;
+        lostFlag = 1,
+        soundFx = new Audio("music/scrap-brain-zone.mp3");
+        bite = new Audio("music/bite.wav")
+        stopMusic = "false";
 
     canvas.width = 909;
     canvas.height = 680;
@@ -71,7 +74,39 @@ var Engine = (function(global) {
         reset();
         lastTime = Date.now();
         main();
+        addButton();
     };
+    
+    function addButton() {
+    	var btn = document.createElement("BUTTON");
+    	var t = document.createTextNode("Stop Music!");
+    	btn.appendChild(t);
+    	btn.appendChild(t);
+    	document.body.appendChild(btn);
+    	btn.onclick = function() {
+		//alert("Button clicked!");
+    		playBckgrndMusic("true");
+    	}
+    }; 
+   
+   
+    
+    //This function plays background music in a loop until game is over
+    function playBckgrndMusic(stpMsc) {
+    	stopMusic = stpMsc; 
+         if(stopMusic === "false") {
+        		//alert(stopMusic);
+	            soundFx.loop = true;
+	            soundFx.play(); 
+	     } else if(stopMusic === "true") {  
+        		soundFx.pause();
+				//alert(stopMusic);
+        	}
+    };
+    
+    //This is the function call to playBckgrndMusic
+    playBckgrndMusic("false");
+          
 
     /* This function is called by main (our game loop) and itself calls all
      * of the functions which may need to update entity's data. Based on how
@@ -112,21 +147,21 @@ var Engine = (function(global) {
                 player.resetPosition();
                 player.lossLife();
                 blueGem.resetPosition();
+                bite.play();
             }
         }
     };
     
     
     //This function lets the player to 'collect' the gem : 
-    //uses collision and change of player sprite
+    //Calls collideGem and if true, calls the below functions including tracking the number of trophies won
     function collectBlueGem() {
-        if (collide2(player, blueGem, 30)) {
+        if (collideGem(player, blueGem, 30)) {
             blueGem.hide();
             blueGem.winTrophy();
             blueGem.resetPosition();
             player.resetPosition();
             gemsCollected++;
-            //ctx.drawImage(Resources.get(this.blueGemSmall), 700, 50);
         }
    };
 
@@ -141,8 +176,8 @@ var Engine = (function(global) {
     };
     
     
-    //This function checks for collision during the game between any two entities 
-    function collide2(player,entity,theta) {
+    //This function checks for collision during the game between the player and the gem 
+    function collideGem(player,entity,theta) {
         if((entity.x >= (player.x - theta - 20)) && (entity.x <= (player.x + theta + 30))) {
             if ((entity.y >= (player.y - theta + 20)) && (entity.y <= (player.y + theta + 70))){
                 return true;
@@ -152,10 +187,9 @@ var Engine = (function(global) {
     
     
     
-    //This detects the game over, when there is no more life for player left (3 allowed)
+    //This detects the game over, when there are no more player lives left (3 allowed)
     function gameOver() {
         if(player.life === 0) {
-            //soundEfx.pause();
             enemy.speed = 0;
             player.speed = 0;
             player.sprite = player.sad;
@@ -165,6 +199,7 @@ var Engine = (function(global) {
             blueGem.hide();
             ctx.font = "35px Arial";
             ctx.fillStyle = "red";
+            playBckgrndMusic("true");
             ctx.fillText("Game Over", 350, 30);
             if(lostFlag === 1) {
                 lostFlag++;
@@ -173,25 +208,21 @@ var Engine = (function(global) {
     };
     
     
-    //This function announces the winner with a background music and 
-    //meme text when the conditions are met: minimum feed set to four bottles 
+    //This function announces the winner with 
+    //meme text when the conditions are met: minimum feed set to five gem captures 
     function winner() {
         if((gemsCollected === 5) && (player.life)) {
-            //soundEfx.pause();
             enemy.speed = 0;
             player.speed = 0;
             player.x = 410;
             player.y = 45;
             allEnemies = [];
             blueGem.hide();
-            //milkBottle.hide();
-            //babyGirl.happy();
-            //babyBoy.happy();
             ctx.font = "35px Arial";
             ctx.fillStyle = "Blue";
+            playBckgrndMusic("true");
             ctx.fillText("You Won!", 350, 45);
             if(winFlag === 1) {
-                //winSnd.play();
                 winFlag++;
             }
         }
