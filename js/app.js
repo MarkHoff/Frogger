@@ -12,13 +12,11 @@ var PLAYER_StrtX = 0,
     GEM_X = [30,131,232,333,434,535,636,737,838],
     GEM_Y = [200, 298, 381, 464],
     stopMusic = true;
-
-   
-var testFunction = function() {
-		stopMusic = false;
-		//alert("stopMusic");
-     
-  };
+  
+//var testFunction = function() {
+//		stopMusic = false;   
+//  };
+  
 var Enemy = function() {
     // The image/sprite for our enemies, this uses
     // a helper we've provided to easily load images
@@ -71,14 +69,13 @@ function spawnEnemy(n) {
     }
 };
 
-chkLevel();
 //function invoke to chk the level of the game
 //End Enemy functions
+chkLevel();
 
 // Now write your own player class
 // This class requires an update(), render() and
 // a handleInput() method.
-
 var Player = function(x,y,life) {
     this.sprite = 'images/char-boy.png';
     this.playerLife = 'images/char-boy-life.png';
@@ -159,10 +156,6 @@ Player.prototype.handleInput = function(key) {
     }
 };
 
-// Now instantiate your objects.
-// Place all enemy objects in an array called allEnemies
-// Place the player object in a variable called player
-
 // Creating a new player object
 var player = new Player(PLAYER_StrtX, PLAYER_StrtY, player_life);
 
@@ -173,9 +166,9 @@ var BlueGem = function(trophy) {
     this.y = GEM_Y[Math.floor(Math.random()*4)];
     this.playerTrophy = 'images/Gem Blue Small.png';
     this.trophy = trophy;
-    //console.log("The gem is at " + this.x + " and " + this.y);
 };
 
+// BlueGem prototype to render the object
 BlueGem.prototype.render = function() {
     var positionX = 0;
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
@@ -186,7 +179,7 @@ BlueGem.prototype.render = function() {
 };
 
 //This function hides the blue gem by putting it in negative x and y axis 
-//after it is collected by player in engine.js via collectMilkBottle() function
+//after it is collected by player in engine.js via collectBlueGem() function
 BlueGem.prototype.hide = function() {
     this.x = -800;
     this.y = -800;
@@ -199,6 +192,7 @@ BlueGem.prototype.resetPosition = function() {
     this.y = GEM_Y[Math.floor(Math.random()*4)];
 };
 
+// BlueGem prototype to add trophies when gems are captured
 BlueGem.prototype.winTrophy = function() {
     this.trophy++ ;
     

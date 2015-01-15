@@ -19,17 +19,17 @@ var Engine = (function(global) {
      * create the canvas element, grab the 2D context for that canvas
      * set the canvas elements height/width and add it to the DOM.
      */
+    
     var doc = global.document,
         win = global.window,
         canvas = doc.createElement('canvas'),
         ctx = canvas.getContext('2d'),
         lastTime,
-        collectedGem = 0,
         gemsCollected = 0,
         winFlag = 1,
         lostFlag = 1,
         soundFx = new Audio("music/scrap-brain-zone.mp3");
-        bite = new Audio("music/bite.wav")
+        bite = new Audio("music/bite.wav");
         stopMusic = "false";
 
     canvas.width = 909;
@@ -39,6 +39,7 @@ var Engine = (function(global) {
     /* This function serves as the kickoff point for the game loop itself
      * and handles properly calling the update and render methods.
      */
+    
     function main() {
         /* Get our time delta information which is required if your game
          * requires smooth animation. Because everyone's computer processes
@@ -46,23 +47,27 @@ var Engine = (function(global) {
          * would be the same for everyone (regardless of how fast their
          * computer is) - hurray time!
          */
+        
         var now = Date.now(),
             dt = (now - lastTime) / 1000.0;
 
         /* Call our update/render functions, pass along the time delta to
          * our update function since it may be used for smooth animation.
          */
+        
         update(dt);
         render();
 
         /* Set our lastTime variable which is used to determine the time delta
          * for the next time this function is called.
          */
+        
         lastTime = now;
 
         /* Use the browser's requestAnimationFrame function to call this
          * function again as soon as the browser is able to draw another frame.
          */
+        
         win.requestAnimationFrame(main);
     };
 
@@ -70,6 +75,7 @@ var Engine = (function(global) {
      * particularly setting the lastTime variable that is required for the
      * game loop.
      */
+    
     function init() {
         reset();
         lastTime = Date.now();
@@ -84,30 +90,24 @@ var Engine = (function(global) {
     	btn.appendChild(t);
     	document.body.appendChild(btn);
     	btn.onclick = function() {
-		//alert("Button clicked!");
     		playBckgrndMusic("true");
-    	}
+    	};
     }; 
    
-   
-    
     //This function plays background music in a loop until game is over
     function playBckgrndMusic(stpMsc) {
     	stopMusic = stpMsc; 
          if(stopMusic === "false") {
-        		//alert(stopMusic);
 	            soundFx.loop = true;
 	            soundFx.play(); 
 	     } else if(stopMusic === "true") {  
         		soundFx.pause();
-				//alert(stopMusic);
         	}
     };
     
     //This is the function call to playBckgrndMusic
     playBckgrndMusic("false");
           
-
     /* This function is called by main (our game loop) and itself calls all
      * of the functions which may need to update entity's data. Based on how
      * you implement your collision detection (when two entities occupy the
@@ -117,6 +117,7 @@ var Engine = (function(global) {
      * functionality this way (you could just implement collision detection
      * on the entities themselves within your app.js file).
      */
+    
     function update(dt) {
         updateEntities(dt);
         bugCollision();
@@ -132,13 +133,13 @@ var Engine = (function(global) {
      * the data/properties related to  the object. Do your drawing in your
      * render methods.
      */
+    
     function updateEntities(dt) {
         allEnemies.forEach(function(enemy) {
             enemy.update(dt);
         });
         player.update();
     };
-    
     
     //This function checks the collision for bug with the player
     function bugCollision() {
@@ -151,10 +152,10 @@ var Engine = (function(global) {
             }
         }
     };
-    
-    
+        
     //This function lets the player to 'collect' the gem : 
-    //Calls collideGem and if true, calls the below functions including tracking the number of trophies won
+    //Calls collideGem and if true, calls the below functions 
+    //including tracking the number of trophies won
     function collectBlueGem() {
         if (collideGem(player, blueGem, 30)) {
             blueGem.hide();
@@ -164,8 +165,7 @@ var Engine = (function(global) {
             gemsCollected++;
         }
    };
-
-    
+ 
     //This function checks for collision during the game between any two entities 
     function collide(player,entity,theta) {
         if((entity.x >= (player.x - theta - 20)) && (entity.x <= (player.x + theta + 30))) {
@@ -175,7 +175,6 @@ var Engine = (function(global) {
         }
     };
     
-    
     //This function checks for collision during the game between the player and the gem 
     function collideGem(player,entity,theta) {
         if((entity.x >= (player.x - theta - 20)) && (entity.x <= (player.x + theta + 30))) {
@@ -184,9 +183,7 @@ var Engine = (function(global) {
             }
         }
     };
-    
-    
-    
+      
     //This detects the game over, when there are no more player lives left (3 allowed)
     function gameOver() {
         if(player.life === 0) {
@@ -200,14 +197,13 @@ var Engine = (function(global) {
             ctx.font = "35px Arial";
             ctx.fillStyle = "red";
             playBckgrndMusic("true");
-            ctx.fillText("Game Over", 350, 30);
+            ctx.fillText("Game Over. You collected " + gemsCollected + " out of 5 gems.", 150, 30);
             if(lostFlag === 1) {
                 lostFlag++;
             }
         }
     };
-    
-    
+       
     //This function announces the winner with 
     //meme text when the conditions are met: minimum feed set to five gem captures 
     function winner() {
@@ -221,7 +217,7 @@ var Engine = (function(global) {
             ctx.font = "35px Arial";
             ctx.fillStyle = "Blue";
             playBckgrndMusic("true");
-            ctx.fillText("You Won!", 350, 45);
+            ctx.fillText("You Won! You collected all " + gemsCollected + " gems!", 200, 30);
             if(winFlag === 1) {
                 winFlag++;
             }
@@ -234,6 +230,7 @@ var Engine = (function(global) {
      * they are flipbooks creating the illusion of animation but in reality
      * they are just drawing the entire screen over and over.
      */
+    
     function render() {
         /* This array holds the relative URL to the image used
          * for that particular row of the game level.
@@ -244,7 +241,7 @@ var Engine = (function(global) {
                 'images/stone-block.png',   // Row 1 of 4 of stone
                 'images/stone-block.png',   // Row 2 of 4 of stone
                 'images/stone-block.png',   // Row 3 of 4 of stone
-                'images/stone-block.png',   // Row 1 of 4 of grass
+                'images/stone-block.png',   // Row 4 of 4 of grass
                 'images/grass-block.png'    // Row 1 of 1 of grass
             ],
             numRows = 7,
@@ -255,6 +252,7 @@ var Engine = (function(global) {
          * and, using the rowImages array, draw the correct image for that
          * portion of the "grid"
          */
+        
         for (row = 0; row < numRows; row++) {
             for (col = 0; col < numCols; col++) {
                 /* The drawImage function of the canvas' context element
@@ -268,7 +266,6 @@ var Engine = (function(global) {
             }
         }
 
-
         renderEntities();
     }
 
@@ -276,6 +273,7 @@ var Engine = (function(global) {
      * tick. It's purpose is to then call the render functions you have defined
      * on your enemy and player entities within app.js
      */
+    
     function renderEntities() {
         /* Loop through all of the objects within the allEnemies array and call
          * the render function you have defined.
@@ -292,6 +290,7 @@ var Engine = (function(global) {
      * handle game reset states - maybe a new game menu or a game over screen
      * those sorts of things. It's only called once by the init() method.
      */
+    
     function reset() {
         // noop
     }
@@ -300,6 +299,7 @@ var Engine = (function(global) {
      * draw our game level. Then set init as the callback method, so that when
      * all of these images are properly loaded our game will start.
      */
+    
     Resources.load([
         'images/stone-block.png',
         'images/water-block.png',
@@ -325,5 +325,6 @@ var Engine = (function(global) {
      * object when run in a browser) so that developer's can use it more easily
      * from within their app.js files.
      */
+    
     global.ctx = ctx;
 })(this);
